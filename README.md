@@ -1,5 +1,13 @@
 # Krea-2 Pose Control-LoRA
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-controlnet/main/docs/showcase/final/hero-v2/final/final_generation_montage.png" alt="Krea-2 Pose Control final generations" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-controlnet/main/docs/showcase/final/hero-v2/final/final_condition_montage.png" alt="Krea-2 Pose Control pose conditions" width="100%">
+</p>
+
 Frozen pose-conditioned image generation for Krea-2 Turbo. A rendered
 PoseBridge skeleton controls spatial human geometry; the prompt controls
 compatible appearance and rendering.
