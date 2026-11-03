@@ -8,11 +8,13 @@ import os
 import numpy as np
 import torch
 from PIL import Image
+import folder_paths
 
 from .krea2_pose_runtime.runtime import Runtime, generate, load_runtime
 from .controlnet_aux import ControlNetAuxDependencyError, load_dwpose_module
 from .dwpose import dwpose_person_confidence, normalize_dwpose_body18
 from .renderer import render_coco17_people
+
 
 _DETECTORS: dict[str, Any] = {}
 _DWPOSE_DETECTORS: dict[tuple[str, str | None], Any] = {}
@@ -226,33 +228,90 @@ class Krea2PoseGenerate:
 
     @classmethod
     def INPUT_TYPES(cls):
-        return {"required": {
+        return {
+        "required": {
             "prompt": ("STRING", {"multiline": True, "default": ""}),
             "pose_condition": ("IMAGE",),
             "seed": ("INT", {"default": 42, "min": 0, "max": 2**63 - 1}),
-            "control_scale": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 2.0, "step": 0.05}),
+            "control_scale": (
+                "FLOAT",
+                {"default": 1.0, "min": 0.01, "max": 2.0, "step": 0.05},
+            ),
             "steps": ("INT", {"default": 8, "min": 8, "max": 8}),
-            "mu": ("FLOAT", {"default": 1.15, "min": 1.15, "max": 1.15, "step": 0.01}),
-            "geometry_mode": (["native_aspect", "explicit_size"], {"default": "native_aspect"}),
-            "width": ("INT", {"default": 1024, "min": 16, "max": 4096, "step": 16}),
-            "height": ("INT", {"default": 1024, "min": 16, "max": 4096, "step": 16}),
-            "release_artifact_path": ("STRING", {"default": ""}),
-            "krea2_turbo_path": ("STRING", {"default": ""}),
-            "krea2_raw_path": ("STRING", {"default": ""}),
-        }}
+            "mu": (
+                "FLOAT",
+                {"default": 1.15, "min": 1.15, "max": 1.15, "step": 0.01},
+            ),
+            "geometry_mode": (
+                ["native_aspect", "explicit_size"],
+                {"default": "native_aspect"},
+            ),
+            "width": (
+                "INT",
+                {"default": 1024, "min": 16, "max": 4096, "step": 16},
+            ),
+            "height": (
+                "INT",
+                {"default": 1024, "min": 16, "max": 4096, "step": 16},
+            ),
+            "release_artifact": (
+                folder_paths.get_filename_list("checkpoints"),
+            ),
+            "krea2_turbo": (
+                folder_paths.get_filename_list("checkpoints"),
+            ),
+            "krea2_raw": (
+                folder_paths.get_filename_list("checkpoints"),
+            ),
+        }
+    }
 
     def generate(self, prompt, pose_condition, seed=42, control_scale=1.0, steps=8, mu=1.15,
-                 geometry_mode="native_aspect", width=1024, height=1024,
-                 release_artifact_path="", krea2_turbo_path="", krea2_raw_path=""):
-        key = (str(Path(krea2_turbo_path).expanduser()), str(release_artifact_path), str(Path(krea2_raw_path).expanduser()))
+             geometry_mode="native_aspect", width=1024, height=1024,
+             release_artifact="", krea2_turbo="", krea2_raw=""):
+
+        release_artifact_path = folder_paths.get_full_path_or_raise(
+            "checkpoints", release_artifact
+        )
+        krea2_turbo_path = folder_paths.get_full_path_or_raise(
+            "checkpoints", krea2_turbo
+        )
+        krea2_raw_path = folder_paths.get_full_path_or_raise(
+            "checkpoints", krea2_raw
+        )
+
+        key = (
+            str(Path(krea2_turbo_path).expanduser()),
+            str(release_artifact_path),
+            str(Path(krea2_raw_path).expanduser()),
+        )
+
         if key not in _RUNTIMES:
-            _RUNTIMES[key] = load_runtime(turbo_path=krea2_turbo_path, release_artifact=release_artifact_path,
-                                          base_raw_path=krea2_raw_path)
-        dimensions = (None, None) if geometry_mode == "native_aspect" else (int(width), int(height))
+            _RUNTIMES[key] = load_runtime(
+                turbo_path=krea2_turbo_path,
+                release_artifact=release_artifact_path,
+                base_raw_path=krea2_raw_path,
+            )
+
+        dimensions = (
+            (None, None)
+            if geometry_mode == "native_aspect"
+            else (int(width), int(height))
+        )
+
         images = []
         for offset, condition in enumerate(pose_condition):
-            output = generate(_RUNTIMES[key], prompt=prompt, pose_image=_image_to_pil(condition),
-                              seed=int(seed) + offset, control_scale=float(control_scale), steps=int(steps), mu=float(mu),
-                              width=dimensions[0], height=dimensions[1])
+            output = generate(
+                _RUNTIMES[key],
+                prompt=prompt,
+                pose_image=_image_to_pil(condition),
+                seed=int(seed) + offset,
+                control_scale=float(control_scale),
+                steps=int(steps),
+                mu=float(mu),
+                width=dimensions[0],
+                height=dimensions[1],
+            )
             images.append(_pil_to_image(output))
+
         return (torch.cat(images, dim=0),)
