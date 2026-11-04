@@ -1,12 +1,5 @@
 # Krea-2 Pose Control-LoRA
 
-## ComfyUI
-
-Using the model with ComfyUI?
-
-Use the standalone ComfyUI package:
-https://github.com/s-adhit/ComfyUI-Krea2-Pose
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-control-LoRA/main/docs/showcase/final/hero-v2/final/final_generation_montage.png" alt="Krea-2 Pose Control final generations" width="100%">
 </p>
@@ -60,22 +53,32 @@ Qualitative and blog-ready assets are indexed in
 including the hero showcase, geometry comparison, hard-pose examples, and the
 appendix regeneration manifest.
 
-## Inference and ComfyUI
+## Inference 
 
 Use [inference.py](inference.py) for the canonical CLI contract. It validates
 the frozen release before loading and writes an output provenance sidecar. The
 CLI defaults to native/aspect-preserving geometry; explicit dimensions must be
 positive multiples of 16.
 
-[comfyui/README.md](comfyui/README.md) documents the completed standalone
-ComfyUI integration, including the DWPose-to-PoseBridge conversion path and
-frozen model paths.
+## ComfyUI
+
+For ComfyUI, use the standalone package:
+
+https://github.com/s-adhit/ComfyUI-Krea2-Pose
+
+It includes the custom nodes, DWPose-to-PoseBridge preprocessing, and an example reference-image workflow.
+
+The package provides:
+
+- `Krea2PoseExtractor` — reference image to PoseBridge COCO-17 condition
+- `Krea2PoseCondition` — validates an existing pose condition
+- `Krea2PoseGenerate` — pose-conditioned Krea-2 Turbo generation
 
 ## Repository status
 
 Model development, training, evaluation, frozen release, and ComfyUI
 integration are complete. The repository is in its blog/documentation and
-evidence-archive phase; it does not have a future adapter roadmap.
+evidence-archive phase; it does not have a future adapter roadmap
 
 ## References
 
