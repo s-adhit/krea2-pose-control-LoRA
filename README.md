@@ -1,11 +1,18 @@
 # Krea-2 Pose Control-LoRA
 
+## ComfyUI
+
+Using the model with ComfyUI?
+
+Use the standalone ComfyUI package:
+https://github.com/s-adhit/ComfyUI-Krea2-Pose
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-controlnet/main/docs/showcase/final/hero-v2/final/final_generation_montage.png" alt="Krea-2 Pose Control final generations" width="100%">
+  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-control-LoRA/main/docs/showcase/final/hero-v2/final/final_generation_montage.png" alt="Krea-2 Pose Control final generations" width="100%">
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-controlnet/main/docs/showcase/final/hero-v2/final/final_condition_montage.png" alt="Krea-2 Pose Control pose conditions" width="100%">
+  <img src="https://raw.githubusercontent.com/s-adhit/krea2-pose-control-LoRA/main/docs/showcase/final/hero-v2/final/final_condition_montage.png" alt="Krea-2 Pose Control pose conditions" width="100%">
 </p>
 
 Frozen pose-conditioned image generation for Krea-2 Turbo. A rendered
